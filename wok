@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+#require 'rubygems'
+require 'thor'
+require 'thor/group'
+require 'pathname'
+require_relative 'lib/wok.rb'
+
+module Wok
+
+  class RecipeParser < Thor
+    extend Wok::WokHelpers 
+    build_thor_commands "recipe"
+  end
+
+  class IngredientParser < Thor
+    extend Wok::WokHelpers
+    build_thor_commands "ingredient"
+  end
+
+ class WokParser < Thor
+    namespace "wok"
+
+    desc "<command> help", "Print help for a particular command"
+    def command_help; end
+
+    desc "list [partal name]", "Find a recipe or ingredient by a name"
+    def list file=""
+      if file.downcase == "help"
+        help
+      else
+        invoke "wok:recipe_parser:list", [file]
+        invoke "wok:ingredient_parser:list", [file]
+      end
+    end
+
+    register RecipeParser, "recipe", "recipe <path/name> <options>", "Run recipe commands"
+    register IngredientParser, "ingredient", "ingredient <path/name> <options>", "Run ingredient commands"
+  end
+end
+
+Wok::WokParser.start 
