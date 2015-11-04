@@ -12,8 +12,8 @@ module Wok
     module ClassMethods
       def build_thor_tasks
         namespace Thor::Util.namespace_from_thor_class(parsable_class_name)
-        build_stages_tasks
-        build_help_task
+        build_stages_tasks parsable_class
+        build_help_task parsable_class
         build_list_task
       end
 
@@ -29,13 +29,13 @@ module Wok
         @parsable_type ||= self.to_s[/Wok::(.*)Parser/,1]
       end
 
-      def build_stages_tasks
+      def build_stages_tasks klass
         %w[requirements cook cleanup taste].each do |stage|
           usage = "#{stage} <#{parsable_type}_path> [options]"
           description = "Execute the #{stage} stage for thise #{parsable_type}"
           desc usage, description
           define_method stage do |file|
-            parsable_class.new( file ).send( "execute_#{stage}" )
+            klass.new( file ).send( "execute_#{stage}" )
           end
         end
       end
@@ -61,11 +61,11 @@ module Wok
         end
       end
 
-      def build_help_task
+      def build_help_task klass
         desc 'explain [file]', parsable_type + ' show options'
         define_method :explain do |file|
           ARGV.shift 4
-          parsable_class.new( file ).help
+          klass.new( file ).help
         end
       end
     end
