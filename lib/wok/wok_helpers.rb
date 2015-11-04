@@ -2,15 +2,12 @@ require 'trollop'
 module Wok
   module WokHelpers
 
-
-
     class << self
       def included(base) #:nodoc:
         base.send :extend,  ClassMethods
         base.send :build_thor_tasks
       end
     end
-
 
     module ClassMethods
       def build_thor_tasks
@@ -28,14 +25,14 @@ module Wok
         @parsable_class ||= parsable_class_name.constantize
       end
 
-      def parsable_name
-        @parsable_name ||= self.to_s[/Wok::(.*)Parser/,1]
+      def parsable_type
+        @parsable_type ||= self.to_s[/Wok::(.*)Parser/,1]
       end
 
       def build_stages_tasks
         %w[requirements cook cleanup taste].each do |stage|
-          usage = "#{stage} <#{parsable_name}_path> [options]"
-          description = "Execute the #{stage} stage for thise #{parsable_name}"
+          usage = "#{stage} <#{parsable_type}_path> [options]"
+          description = "Execute the #{stage} stage for thise #{parsable_type}"
           desc usage, description
           define_method stage do |file|
             parsable_class.new( file ).send( "execute_#{stage}" )
@@ -44,7 +41,7 @@ module Wok
       end
 
       def build_list_task
-        directory_location = parsable_name.pluralize
+        directory_location = parsable_type.pluralize
         desc "list [partial file name]", "Lists avaialable #{ directory_location }"
         define_method :list do |limit=""|
           puts '-' * 50
@@ -65,7 +62,7 @@ module Wok
       end
 
       def build_help_task
-        desc 'explain [file]', parsable_name + ' show options'
+        desc 'explain [file]', parsable_type + ' show options'
         define_method :explain do |file|
           ARGV.shift 4
           parsable_class.new( file ).help
