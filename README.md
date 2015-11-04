@@ -44,6 +44,13 @@ Commands:
   wok ingredient list [partial file name]                  # Lists avaialable ingredients
   wok ingredient requirements <ingredient_path> [options]  # Execute the requirements stage for thise ingredient
   wok ingredient taste <ingredient_path> [options]         # Execute the taste stage for thise ingredient
+
+ #> ./bin/wok recipe explain recipe1.rb
+Options:
+     --dry-run, -d:   Dont actually do anything, just print steps
+     --log-dir, -l <s>:   Output logs to this directory
+     --iface, -i <s>:   Interface to internet.
+     --wiface, -w <s>:   Interface to wireless network. (Default: This is truly special)
 ```
 
 **Example Recipe:**
